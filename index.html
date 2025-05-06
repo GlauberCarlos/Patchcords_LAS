@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="cabos.css">
+    <title>FanOut</title>
+</head>
+<body>
+    <header>
+        <div class="logotipo">
+            <img class="yelco" src="images/yelcofiberoptics.png" alt="Yelco Fiber Optics">
+        </div>
+        <div class="titulo">Gerador de Cabos <br>LAS</div>
+    </header>
+    <div id="resumo">
+        Ferramenta de uso interno para configurar e criar imagens de Patchcords.<br><br>
+        Selecione os conectores, o enrolamento, digite o comprimento do cabo e clique em Guardar Imagem.
+    </div>
+    <div class="seletores">
+        <div id="formularios">
+            <div class="form-bloco">
+                <label for="conE">Conector Esquerdo</label>
+                <select name="conE" id="conE" class="selectE">
+                </select>
+            </div>    
+            <div class="form-bloco">
+                <label for="rolo">Enrolamento</label>
+                <select name="rolo" id="rolo" class="selectC">
+                </select>
+            </div>
+            <div class="form-bloco">
+                <label for="conD">Conector Direito</label>
+                <select name="conD" id="conD" class="selectD">
+                </select>
+            </div>
+        </div>
+        
+        <div id="medida">
+            <label for="comprimento">Comprimento do Cabo:</label>
+            <input
+                id="comprimento"
+                type="text"
+                name="comprimento"
+                placeholder="Ex: 300mm ou 2m"
+            >
+        </div>
+
+        <div id="btnGerar">
+            <button>Guardar Imagem</button>
+        </div>
+    </div>
+    <div id="canvas">
+        <canvas id="meuCanvas"></canvas>
+    </div>
+
+    <div id="creditos">
+        &copy; Glauber da Silva Carlos
+    </div>
+    <script src="cabos.js"></script>
+</body>
+</html>
