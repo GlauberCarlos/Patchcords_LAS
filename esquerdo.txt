@@ -1,9 +1,9 @@
-LC Azul Duplo.png
-LC Azul.png
-LC Verde Duplo.png
-LC Verde.png
-SC Azul Duplo.png
-SC Azul.png
-SC Bege Duplo.png
-SC Verde Duplo.png
-SC Verde.png
+LC_APC.png
+LC_APC Duplex.png
+LC_PC.png
+LC_PC Duplex.png
+SC_APC.png
+SC_APC Duplex.png
+SC_PC.png
+SC_PC Duplex.png
+SC_MM Duplex.png

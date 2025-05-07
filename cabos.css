@@ -1,16 +1,22 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+  
+
 body{
     background-color: rgb(245, 245, 245);
-    font-family:sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     color: #656565;
 }
 
 header{
+    background-color: #ffffff;
     display: flex;
-    border-bottom: 3px solid #65656541;
+    border-bottom: 3px solid #023047;
     justify-content: center;
     align-items: center;
-    margin: 10px 0;
+    padding: 10px 0;
 }
 
 .logotipo{
@@ -23,35 +29,35 @@ header{
 
 .titulo {
     font-weight: bold;
-    font-size: 20px;
-    padding-left: 50px;
+    font-size: 30px;
+    padding-left: 180px;
     text-align: center;
 }
 
 #resumo{
     font-size: 16px;
     text-align: center;
-    padding: 10px 0;
+    padding: 15px 0;
     width: 850px;
     margin: 0 auto 5px;
 }
 
 .seletores{
-    width: 850px;
+    width: 1000px;
     /* border: 1px solid #cf3535; */
     margin: 0px auto 5px;
 }
 
 #formularios {
     padding: 15px 0;
+    margin: 0 40px;
     display: flex;
-    font-size: 20px;
     justify-content: space-between;
     border-bottom: 1px solid #c0c0c0;
     /* border: 1px solid #354ccf; */
 }
 
-.form-bloco{
+.form-bloco, .medida{
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -60,25 +66,48 @@ header{
 
 .form-bloco label {
     font-weight: bold;
-    padding: 5px;
-    width: 240px;
+    font-size: 16px;
+    color: #023047;
+    padding: 5px 5px 15px;
+    width: 220px;
     /* border: 1px solid #cf359c; */
 }
 
-select {
-    color: #656565;
-    padding-left: 10px;
-    height: 40px;
-    border-radius: 6px;
+.medida label{
+    font-weight: bold;
+    font-size: 16px;
+    color: #023047;
+    padding:  5px 5px 15px;
+    width: 220px;
+}
 
+select {
+    font-size: 14px;
+    padding: 0 0 0 10px;
+    
+    height: 50px;
+    background-color: #ffffff;
+    border: 1px solid #c5c5c5;
+    border-radius: 6px;
+    
+    cursor: pointer;
+    
     appearance: none;
     -webkit-appearance: none;    /* Para navegadores WebKit */
     -moz-appearance: none;       /* Para Firefox */
+}
 
+.medida input{
+    font-size: 14px;
+    padding: 0 0 0 10px;
+
+    height: 50px;
     background-color: #ffffff;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    cursor: pointer;
+    border: 1px solid #c5c5c5;
+    text-align: center;
+    border-radius: 6px;
+    width: 220px;
+    
 }
 
 .selectE{
@@ -102,24 +131,9 @@ select {
     background-size: 45px;    
 }
 
-#medida{
-    padding: 25px 0;
-    border-bottom: 1px solid #c0c0c0;
-    width: 500px;
-    margin: 5px auto;
-    text-align: center;
-}
-
-#medida label{
-    font-weight: bold;
-    font-size: 20px;
-    margin: 5px 25px;
-}
-
-#medida input{
-    height: 25px;    
-    text-align: center;
-}
+.opcao-bloqueada {
+    color: rgb(219, 219, 219);
+  }
 
 #btnGerar{    
     width: 200px;

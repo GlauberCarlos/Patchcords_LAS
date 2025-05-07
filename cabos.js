@@ -1,63 +1,120 @@
 //carregamento das listas atraves dos arq .txt
+//foi criado arrays de cada lista para poder modificar mais adiante, mediante selecoes feitas
+
+let dadosEsquerdo = []
+let dadosCentro = []
+let dadosDireito = []
 
 fetch('esquerdo.txt')
 .then(res => res.text())
 .then(texto => 
 {
-    const nomesE = texto.split('\n').map(linha => linha.trim())
-    console.log(nomesE)
-    const selectE = document.getElementById('conE')
-
-    nomesE.forEach(nome => {
-        const optE = document.createElement('option')
-        optE.value = nome;
-        optE.textContent = nome.slice(0,-4)
-        selectE.appendChild(optE)
-        console.log(optE)
-    });
+    dadosEsquerdo = texto.split('\n').map(linha => linha.trim())
+    // console.log(dadosEsquerdo)
+    preencherSelect('conE', dadosEsquerdo)
 });
 
 fetch('centro.txt')
 .then(res => res.text())
 .then(texto => 
 {
-    const nomesC = texto.split('\n').map(linha => linha.trim())
-    console.log(nomesC)
-    const selectC = document.getElementById('rolo')
-
-    nomesC.forEach(nome => {
-        const optC = document.createElement('option')
-        optC.value = nome
-        optC.textContent = nome.slice(0,-4)
-        selectC.appendChild(optC)
-        console.log(optC)
-    });
+    dadosCentro = texto.split('\n').map(linha => linha.trim())
+    // console.log(dadosCentro)
+    preencherSelect('rolo', dadosCentro)
 });
 
 fetch('direito.txt')
 .then(res => res.text())
 .then(texto => 
 {
-    const nomesD = texto.split('\n').map(linha => linha.trim())
-    console.log(nomesD)
-    const selectD = document.getElementById('conD')
-
-    nomesD.forEach(nome => {
-        const optD = document.createElement('option')
-        optD.value = nome;
-        optD.textContent = nome.slice(0,-4)
-        selectD.appendChild(optD)
-        console.log(optD)
-    });
+    dadosDireito = texto.split('\n').map(linha => linha.trim())
+    // console.log(dadosDireito)
+    preencherSelect('conD', dadosDireito)
 });
+
+function preencherSelect(idSelect, listaOriginal, listaPermitida = null, classeBloqueada = "") {
+    const select = document.getElementById(idSelect);
+    select.innerHTML = '';
+
+    listaOriginal.forEach(nome => {
+        const nomeLimpo = nome.replace(".png", "");
+        const opt = document.createElement("option");
+        opt.value = nome;
+        opt.textContent = nomeLimpo.replace("_", "/");
+
+        const permitido = !listaPermitida || listaPermitida.includes(nomeLimpo);
+        if (!permitido) {
+            opt.disabled = true;
+            if (classeBloqueada) {
+                opt.classList.add(classeBloqueada);
+            }
+        }
+
+        select.appendChild(opt);
+    });
+}
+
+function atualizarRolo(){
+    let conE = document.getElementById("conE").value.replace(".png","")
+    let roloPermitidos = compatibilidadeConE[conE]
+    preencherSelect("rolo", dadosCentro, roloPermitidos, "opcao-bloqueada")
+}
+
+function atualizarConD(){
+    let conE = document.getElementById("conE").value.replace(".png","")
+    let conEPermitidos = compatibilidadeConD[conE]
+    preencherSelect("conD", dadosDireito, conEPermitidos, "opcao-bloqueada")
+}
+
+
+//lista de compatibilidades
+
+const compatibilidadeConE = {
+    "LC_PC": ["SX SM"],
+    "LC_APC": ["SX SM"],
+    "LC_PC Duplex": ["DX SM"],
+    "LC_APC Duplex": ["DX SM"],
+    "SC_PC": ["SX SM"],
+    "SC_APC": ["SX SM"],
+    "SC_PC Duplex": ["DX SM"],
+    "SC_APC Duplex": ["DX SM"],
+    "SC_MM Duplex": ["DX MM OM2","DX MM OM3"],     
+}
+  
+const compatibilidadeConD = {
+    "LC_PC": ["LC_APC","LC_PC","SC_PC","SC_APC"],
+    "LC_APC": ["LC_APC","LC_PC","SC_PC","SC_APC"],
+    "LC_PC Duplex": ["LC_APC Duplex","LC_PC Duplex","SC_PC Duplex","SC_APC Duplex"],
+    "LC_APC Duplex": ["LC_APC Duplex","LC_PC Duplex","SC_PC Duplex","SC_APC Duplex"],
+    "SC_PC": ["LC_APC","LC_PC","SC_PC","SC_APC"],
+    "SC_APC": ["LC_APC","LC_PC","SC_PC","SC_APC"],
+    "SC_PC Duplex": ["LC_APC Duplex","LC_PC Duplex","SC_PC Duplex","SC_APC Duplex"],
+    "SC_APC Duplex": ["LC_APC Duplex","LC_PC Duplex","SC_PC Duplex","SC_APC Duplex"],
+    "SC_MM Duplex": ["SC_MM Duplex"],    
+}
+   
+// gatilhos ao clicar nas opcoes
+
+document.getElementById("conE").addEventListener("click", () => {
+    atualizarRolo()
+    atualizarConD()
+    updateCanvas()
+})
+document.getElementById("rolo").addEventListener("click", updateCanvas)
+document.getElementById("conD").addEventListener("click", updateCanvas)
 
 // atualiza a pre visualizacao
 
-document.getElementById("conE").addEventListener("change", updateCanvas)
-document.getElementById("rolo").addEventListener("change", updateCanvas)
-document.getElementById("conD").addEventListener("change", updateCanvas)
-
 function updateCanvas(){
+    const conE = document.getElementById("conE").value.replace(".png", "")
+    const rolo = document.getElementById("rolo").value.replace(".png", "")
+    const conD = document.getElementById("conD").value.replace(".png", "")
+
+    console.log("Valor conE selecionado:", conE);
+    console.log("Opções compatíveis:", compatibilidadeConE[conE]);
+    console.log("Valor conE selecionado:", conD);
+    console.log("Opções compatíveis:", compatibilidadeConD[conD]);
+
     const selectE = document.getElementById("conE")
     const arquivoE = selectE.value
     const selectC = document.getElementById("rolo")
@@ -132,7 +189,7 @@ enviar.addEventListener("click", function()
     ctx.font = "30px Verdana"
     ctx.fillStyle = "black"
     ctx.textAlign = "center"
-    ctx.fillText(comprimento, canvas.width / 2, 45) // (texto, posicao x, posicao y)
+    ctx.fillText(`${comprimento} m`, canvas.width / 2, 45) // (texto, posicao x, posicao y)
 
     ctx.strokeStyle = "black"
     ctx.lineWidth = 2
