@@ -78,7 +78,7 @@ const compatibilidadeConE = {
     "SC_APC": ["SX SM"],
     "SC_PC Duplex": ["DX SM"],
     "SC_APC Duplex": ["DX SM"],
-    "SC_MM Duplex": ["DX MM OM2","DX MM OM3"],     
+    "SC_MM Duplex": ["DX MM OM2","DX MM OM3","DX MM OM2 Reinforce"],     
 }
   
 const compatibilidadeConD = {
