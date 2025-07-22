@@ -1,0 +1,6 @@
+Arrumar DESRICAO DO PATCHCORD
+
+Colocar preço de acordo com a metragem
+Permitir somente números no comprimento do cabo
+
+ver acessos ao drive

@@ -131,6 +131,17 @@ select {
     background-size: 45px;    
 }
 
+.nome-gerado{
+    text-align: center;
+    padding-top: 15px;
+    font-size: 18px;
+}
+
+#nomeGerado {
+    font-weight: bold;
+    color: #023047;
+}
+
 .opcao-bloqueada {
     color: rgb(219, 219, 219);
   }

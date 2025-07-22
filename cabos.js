@@ -33,24 +33,37 @@ fetch('direito.txt')
 });
 
 function preencherSelect(idSelect, listaOriginal, listaPermitida = null, classeBloqueada = "") {
+    // é carregada depois do Fetch ou também pelas funcoes atualizarRolo() e atualizarConD()
+    // PARAMETROS
+
+    // recebe o id (conE, conD ou rolo)
+    // preenche a lista com todos os nomes resgatados dos documentos .txt
+    // parâmetro null pois será montado a seguir ou através do roloPermitidos
+    // string vazia para depois ser indicada a adição da classe no "if" ou a string "opcao-bloqueada"
+
     const select = document.getElementById(idSelect);
     select.innerHTML = '';
+    // seleciona o Id (conE, conD ou rolo) coloca na variável select e é limpo do conteúdo
 
     listaOriginal.forEach(nome => {
+    // para cada linha da lista é feito o procedimento abaixo.
         const nomeLimpo = nome.replace(".png", "");
         const opt = document.createElement("option");
-        opt.value = nome;
-        opt.textContent = nomeLimpo.replace("_", "/");
+        opt.value = nome;                               // nome real com a extensao .png
+        opt.textContent = nomeLimpo.replace("_", "/");  // nome que aparece na tela
+    // cria uma "option" no "select" do HTML, com os nomes de cada linha
 
         const permitido = !listaPermitida || listaPermitida.includes(nomeLimpo);
+    // primeiro valor = negação do Array da lista de compatibilidade
+    // segundo valor = vê se o nome está na lista permitida, usando o .includes
+    // É permitido se a lista de permitidos não existe OU se o item está incluído na lista
         if (!permitido) {
-            opt.disabled = true;
-            if (classeBloqueada) {
-                opt.classList.add(classeBloqueada);
+            opt.disabled = true;                        // se não for permitido, desativa o opt (a opção)
+            if (classeBloqueada) {                      // se classeBloqueada for true 
+                opt.classList.add(classeBloqueada);     // add a class no elemento
             }
         }
-
-        select.appendChild(opt);
+        select.appendChild(opt); // adiciona a opção (permitida ou bloqueada) ao <select>
     });
 }
 
@@ -70,15 +83,15 @@ function atualizarConD(){
 //lista de compatibilidades
 
 const compatibilidadeConE = {
-    "LC_PC": ["SX SM"],
-    "LC_APC": ["SX SM"],
-    "LC_PC Duplex": ["DX SM"],
-    "LC_APC Duplex": ["DX SM"],
-    "SC_PC": ["SX SM"],
-    "SC_APC": ["SX SM"],
-    "SC_PC Duplex": ["DX SM"],
-    "SC_APC Duplex": ["DX SM"],
-    "SC_MM Duplex": ["DX MM OM2","DX MM OM3","DX MM OM2 Reinforce"],     
+    "LC_PC": ["SX SM G652D", "SX SM G657A2"],
+    "LC_APC": ["SX SM G652D", "SX SM G657A2"],
+    "LC_PC Duplex": ["DX SM G652D", "DX SM G657A2"],
+    "LC_APC Duplex": ["DX SM G652D", "DX SM G657A2"],
+    "SC_PC": ["SX SM G652D", "SX SM G657A2"],
+    "SC_APC": ["SX SM G652D", "SX SM G657A2"],
+    "SC_PC Duplex": ["DX SM G652D", "DX SM G657A2"],
+    "SC_APC Duplex": ["DX SM G652D", "DX SM G657A2"],
+    "SC_MM Duplex": ["DX MM OM2","DX MM OM3"],     
 }
   
 const compatibilidadeConD = {
@@ -154,10 +167,15 @@ function updateCanvas(){
 }
 
 //procedimentos do canvas para gerar as imagens a partir do click
+let dados = {}
 
 const enviar = document.getElementById("btnGerar")
-enviar.addEventListener("click", function()
+enviar.addEventListener("click", async function()
 {
+    if (Object.keys(dados).length === 0) {
+        await carregarDadosCSV();
+    }
+
     const selectE = document.getElementById("conE")
     const arquivoE = selectE.value
     const selectC = document.getElementById("rolo")
@@ -186,35 +204,97 @@ enviar.addEventListener("click", function()
     //desenha a linha e setas
 
     const comprimento = document.getElementById("comprimento").value
-    ctx.font = "30px Verdana"
-    ctx.fillStyle = "black"
-    ctx.textAlign = "center"
-    ctx.fillText(`${comprimento} m`, canvas.width / 2, 45) // (texto, posicao x, posicao y)
 
-    ctx.strokeStyle = "black"
-    ctx.lineWidth = 2
-    ctx.beginPath()
-    ctx.moveTo(30, 60)
-    ctx.lineTo(608, 60)
-    ctx.stroke()
-    
-    //setas
-    
-    ctx.beginPath()
-    ctx.moveTo(30, 60)
-    ctx.lineTo(40, 55)
-    ctx.lineTo(40, 65)
-    ctx.closePath()
-    ctx.fill()
-    
-    ctx.beginPath()
-    ctx.moveTo(608, 60)
-    ctx.lineTo(598, 55)
-    ctx.lineTo(598, 65)
-    ctx.closePath()
-    ctx.fill()
+    if (comprimento !== ""){
+        ctx.font = "30px Verdana"
+        ctx.fillStyle = "black"
+        ctx.textAlign = "center"
+        ctx.fillText(`${comprimento} m`, canvas.width / 2, 45) // (texto, posicao x, posicao y)
+
+        ctx.strokeStyle = "black"
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.moveTo(30, 60)
+        ctx.lineTo(608, 60)
+        ctx.stroke()
+        
+        //setas
+        
+        ctx.beginPath()
+        ctx.moveTo(30, 60)
+        ctx.lineTo(40, 55)
+        ctx.lineTo(40, 65)
+        ctx.closePath()
+        ctx.fill()
+        
+        ctx.beginPath()
+        ctx.moveTo(608, 60)
+        ctx.lineTo(598, 55)
+        ctx.lineTo(598, 65)
+        ctx.closePath()
+        ctx.fill()
+    }
 
     //fim da linha e setas
+
+
+    async function carregarDadosCSV() {
+        const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQe60v0tkbVjOl1WbIcqfc8AdS4cjfgKTiXdRLT5O-48TsFtfHgwFQOa2Q9orYZNGyTVI1IWb6Bg-DI/pub?gid=0&single=true&output=csv";
+
+        const resposta = await fetch(urlCSV);
+        const textoCSV = await resposta.text();
+
+        const linhas = textoCSV.split("\n").map(l => l.trim());
+        const cabecalhos = linhas[0].split(",");
+
+        for (let i = 1; i < linhas.length; i++) {
+            const linha = linhas[i].split(",");
+            if (linha.length < 3) continue; // ignora linhas incompletas
+
+            const registro = {};
+
+            for (let j = 1; j < cabecalhos.length; j++) {
+                let valor = linha[j] || "";
+
+                // Se for a coluna "custo", limpa o valor e converte para número
+                if (cabecalhos[j].toLowerCase() === "custo") {
+                    valor = parseFloat(
+                        valor
+                            .replace(/€/g, "")  // remove €
+                            .replace(",", ".")  // vírgula para ponto
+                            .replace(/"/g, "")  // remove aspas
+                            .trim()
+                    );
+                }
+                registro[cabecalhos[j]] = valor;
+            }
+
+            const chave = linha[0]; // nome do arquivo
+            dados[chave] = registro;
+        }
+        console.log("Dicionário de dados:", dados);
+    }
+
+    carregarDadosCSV();
+
+    const descricaoE = dados[arquivoE]?.DESCRICAO || arquivoE;
+    const descricaoC = dados[arquivoC]?.DESCRICAO || arquivoC;
+    const descricaoD = dados[arquivoD]?.DESCRICAO || arquivoD;         
+    const nomeGerado = document.getElementById("nomeGerado")
+    nomeGerado.textContent = `Patchcord ${descricaoE} ${descricaoC} ${descricaoD} ${comprimento}m`
+       
+    const custoE = dados[arquivoE]?.CUSTO || arquivoE;
+    const custoC = dados[arquivoC]?.CUSTO || arquivoC;
+    const custoD = dados[arquivoD]?.CUSTO || arquivoD;
+    let custo = document.getElementById("custo")
+    custoTotal = custoE + custoC + custoD    
+    custo.textContent = `${custoTotal} €`
+
+    console.log(custoE)
+    console.log(custoC)
+    console.log(custoD)
+
+    // carregamento das imagens
 
     imgE.onload = function(){
         ctx.drawImage(imgE, 0, 20)
@@ -244,3 +324,4 @@ enviar.addEventListener("click", function()
     }
 }
 )
+

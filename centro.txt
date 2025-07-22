@@ -1,5 +1,6 @@
-SX SM.png
-DX SM.png
+SX SM G652D.png
+SX SM G657A2.png
+DX SM G652D.png
+DX SM G657A2.png
 DX MM OM2.png
 DX MM OM3.png
-DX MM OM2 Reinforce.png
