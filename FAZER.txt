@@ -1,2 +1,3 @@
-
 ver acessos ao drive
+
+inserir label de diametro do cabo (2 e 3mm)

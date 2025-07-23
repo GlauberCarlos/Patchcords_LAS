@@ -67,6 +67,75 @@ function preencherSelect(idSelect, listaOriginal, listaPermitida = null, classeB
     });
 }
 
+let dados = {};
+
+async function carregarDadosCSV() {
+    const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQe60v0tkbVjOl1WbIcqfc8AdS4cjfgKTiXdRLT5O-48TsFtfHgwFQOa2Q9orYZNGyTVI1IWb6Bg-DI/pub?gid=0&single=true&output=csv";
+
+    const resposta = await fetch(urlCSV);
+    const textoCSV = await resposta.text();
+
+    const linhas = textoCSV.split("\n").map(l => l.trim());
+    const cabecalhos = linhas[0].split(",");
+
+    for (let i = 1; i < linhas.length; i++) {
+        const linha = linhas[i].split(",");
+        if (linha.length < 3) continue;
+
+        const registro = {};
+
+        for (let j = 1; j < cabecalhos.length; j++) {
+            let valor = linha[j] || "";
+
+            if (cabecalhos[j].toLowerCase() === "custo") {
+                valor = parseFloat(
+                    valor.replace(/€/g, "").replace(",", ".").replace(/"/g, "").trim()
+                );
+            }
+
+            registro[cabecalhos[j]] = valor;
+        }
+
+        const chave = linha[0];
+        dados[chave] = registro;
+    }
+
+    console.log("Dicionário de dados:", dados);
+}
+
+async function atualizarDescricaoECusto() {
+    if (Object.keys(dados).length === 0) {
+        await carregarDadosCSV();
+    }
+
+    const arquivoE = document.getElementById("conE").value;
+    const arquivoC = document.getElementById("rolo").value;
+    const arquivoD = document.getElementById("conD").value;
+    const comprimento = parseFloat(document.getElementById("comprimento").value);
+
+    const descricaoE = dados[arquivoE]?.DESCRICAO || arquivoE;
+    const descricaoC = dados[arquivoC]?.DESCRICAO || arquivoC;
+    const descricaoD = dados[arquivoD]?.DESCRICAO || arquivoD;
+
+    const nomeGerado = document.getElementById("nomeGerado");
+    const custoE = dados[arquivoE]?.CUSTO || 0;
+    const custoC = dados[arquivoC]?.CUSTO || 0;
+    const custoD = dados[arquivoD]?.CUSTO || 0;
+
+    const custo = document.getElementById("custo");
+
+    if (!comprimento || comprimento <= 0) {
+        nomeGerado.textContent = `Patchcord ${descricaoC} 2.0mm ${descricaoE} ${descricaoD}`;
+        custo.textContent = "Este comprimento não é válido";
+        return;
+    }
+
+    const custoTotal = custoE + custoD + (comprimento * custoC);
+    nomeGerado.textContent = `Patchcord ${descricaoC} 2.0mm ${descricaoE} ${descricaoD} ${comprimento}m`;
+    custo.textContent = `${custoTotal.toFixed(2)} €`;
+}
+
+
 function atualizarRolo(){
     let conE = document.getElementById("conE").value.replace(".png","")
     let roloPermitidos = compatibilidadeConE[conE]
@@ -167,21 +236,14 @@ function updateCanvas(){
 }
 
 //procedimentos do canvas para gerar as imagens a partir do click
-let dados = {}
 
 const enviar = document.getElementById("btnGerar")
 enviar.addEventListener("click", async function()
 {
-    if (Object.keys(dados).length === 0) {
-        await carregarDadosCSV();
-    }
-
-    const selectE = document.getElementById("conE")
-    const arquivoE = selectE.value
-    const selectC = document.getElementById("rolo")
-    const arquivoC = selectC.value
-    const selectD = document.getElementById("conD")
-    const arquivoD = selectD.value
+    const arquivoE = document.getElementById("conE").value
+    const arquivoC = document.getElementById("rolo").value
+    const arquivoD = document.getElementById("conD").value
+    const comprimento = parseFloat(document.getElementById("comprimento").value);
 
     let carregadoE = false
     let carregadoC = false
@@ -203,133 +265,68 @@ enviar.addEventListener("click", async function()
 
     //desenha a linha e setas
 
-    const comprimento = document.getElementById("comprimento").value
+    const desenharSetas = () => {
+        if (comprimento && comprimento > 0) {
+            ctx.font = "30px Verdana"
+            ctx.fillStyle = "black"
+            ctx.textAlign = "center"
+            ctx.fillText(`${comprimento} m`, canvas.width / 2, 45) // (texto, posicao x, posicao y)
 
-    if (comprimento !== ""){
-        ctx.font = "30px Verdana"
-        ctx.fillStyle = "black"
-        ctx.textAlign = "center"
-        ctx.fillText(`${comprimento} m`, canvas.width / 2, 45) // (texto, posicao x, posicao y)
-
-        ctx.strokeStyle = "black"
-        ctx.lineWidth = 2
-        ctx.beginPath()
-        ctx.moveTo(30, 60)
-        ctx.lineTo(608, 60)
-        ctx.stroke()
-        
-        //setas
-        
-        ctx.beginPath()
-        ctx.moveTo(30, 60)
-        ctx.lineTo(40, 55)
-        ctx.lineTo(40, 65)
-        ctx.closePath()
-        ctx.fill()
-        
-        ctx.beginPath()
-        ctx.moveTo(608, 60)
-        ctx.lineTo(598, 55)
-        ctx.lineTo(598, 65)
-        ctx.closePath()
-        ctx.fill()
-    }
-
-    //fim da linha e setas
-
-    async function carregarDadosCSV() {
-        const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQe60v0tkbVjOl1WbIcqfc8AdS4cjfgKTiXdRLT5O-48TsFtfHgwFQOa2Q9orYZNGyTVI1IWb6Bg-DI/pub?gid=0&single=true&output=csv";
-
-        const resposta = await fetch(urlCSV);
-        const textoCSV = await resposta.text();
-
-        const linhas = textoCSV.split("\n").map(l => l.trim());
-        const cabecalhos = linhas[0].split(",");
-
-        for (let i = 1; i < linhas.length; i++) {
-            const linha = linhas[i].split(",");
-            if (linha.length < 3) continue; // ignora linhas incompletas
-
-            const registro = {};
-
-            for (let j = 1; j < cabecalhos.length; j++) {
-                let valor = linha[j] || "";
-
-                // Se for a coluna "custo", limpa o valor e converte para número
-                if (cabecalhos[j].toLowerCase() === "custo") {
-                    valor = parseFloat(
-                        valor
-                            .replace(/€/g, "")  // remove €
-                            .replace(",", ".")  // vírgula para ponto
-                            .replace(/"/g, "")  // remove aspas
-                            .trim()
-                    );
-                }
-                registro[cabecalhos[j]] = valor;
-            }
-
-            const chave = linha[0]; // nome do arquivo
-            dados[chave] = registro;
+            ctx.strokeStyle = "black"
+            ctx.lineWidth = 2
+            ctx.beginPath()
+            ctx.moveTo(30, 60)
+            ctx.lineTo(608, 60)
+            ctx.stroke()
+            
+            //setas
+            
+            ctx.beginPath()
+            ctx.moveTo(30, 60)
+            ctx.lineTo(40, 55)
+            ctx.lineTo(40, 65)
+            ctx.closePath()
+            ctx.fill()
+            
+            ctx.beginPath()
+            ctx.moveTo(608, 60)
+            ctx.lineTo(598, 55)
+            ctx.lineTo(598, 65)
+            ctx.closePath()
+            ctx.fill()
         }
-        console.log("Dicionário de dados:", dados);
     }
-
-    carregarDadosCSV();
-
-    // gerar custo e descricao
-
-    const descricaoE = dados[arquivoE]?.DESCRICAO || arquivoE;
-    const descricaoC = dados[arquivoC]?.DESCRICAO || arquivoC;
-    const descricaoD = dados[arquivoD]?.DESCRICAO || arquivoD;         
-    const nomeGerado = document.getElementById("nomeGerado")
-    
-    const custoE = dados[arquivoE]?.CUSTO || arquivoE;
-    const custoC = dados[arquivoC]?.CUSTO || arquivoC;
-    const custoD = dados[arquivoD]?.CUSTO || arquivoD;
-    let custo = document.getElementById("custo")
-    custoTotal = custoE + custoD + (comprimento * custoC)
-    
-    if (comprimento == 0 || comprimento == ""){
-        nomeGerado.textContent = `Patchcord ${descricaoE} ${descricaoC} ${descricaoD}`
-        custo.textContent = "Este comprimento não é válido"
-    }
-    else {
-        nomeGerado.textContent = `Patchcord ${descricaoE} ${descricaoC} ${descricaoD} ${comprimento}m`
-        custo.textContent = `${custoTotal.toFixed(2)} €`
-    } 
-
-    console.log(custoE)
-    console.log(custoC)
-    console.log(custoD)
-
+    //fim da linha e setas
     // carregamento das imagens
 
-    imgE.onload = function(){
-        ctx.drawImage(imgE, 0, 20)
-        carregadoE = true
-        todosCarregados();
-    }
-    imgC.onload = function(){
-        ctx.drawImage(imgC, 127, 20)
-        carregadoC = true
-        todosCarregados();
-    }
-    imgD.onload = function(){
-        ctx.drawImage(imgD, 511, 20)
-        carregadoD = true
-        todosCarregados();
-    }
+    let carregadas = 0;
 
-    function todosCarregados(){
-        if (carregadoE && carregadoC && carregadoD){
-            const imgFinal = canvas.toDataURL("image/png")
-    const link = document.createElement('a')
-    link.href = imgFinal
-    link.download = "cabo-final.png"
-    link.click()
+    function verificarImagens() {
+        carregadas++;
+        if (carregadas === 3) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(imgE, 0, 20);
+            ctx.drawImage(imgC, 127, 20);
+            ctx.drawImage(imgD, 511, 20);
+            desenharSetas();
+
+            const imgFinal = canvas.toDataURL("image/png");
+            const link = document.createElement("a");
+            link.href = imgFinal;
+            link.download = "cabo-final.png";
+            link.click();
         }
-
     }
+
+    imgE.onload = verificarImagens;
+    imgC.onload = verificarImagens;
+    imgD.onload = verificarImagens;
 }
 )
+
+document.getElementById("comprimento").addEventListener("input", atualizarDescricaoECusto);
+document.getElementById("conE").addEventListener("change", atualizarDescricaoECusto);
+document.getElementById("rolo").addEventListener("change", atualizarDescricaoECusto);
+document.getElementById("conD").addEventListener("change", atualizarDescricaoECusto);
+
 
