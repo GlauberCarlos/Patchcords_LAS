@@ -237,7 +237,6 @@ enviar.addEventListener("click", async function()
 
     //fim da linha e setas
 
-
     async function carregarDadosCSV() {
         const urlCSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQe60v0tkbVjOl1WbIcqfc8AdS4cjfgKTiXdRLT5O-48TsFtfHgwFQOa2Q9orYZNGyTVI1IWb6Bg-DI/pub?gid=0&single=true&output=csv";
 
@@ -277,18 +276,27 @@ enviar.addEventListener("click", async function()
 
     carregarDadosCSV();
 
+    // gerar custo e descricao
+
     const descricaoE = dados[arquivoE]?.DESCRICAO || arquivoE;
     const descricaoC = dados[arquivoC]?.DESCRICAO || arquivoC;
     const descricaoD = dados[arquivoD]?.DESCRICAO || arquivoD;         
     const nomeGerado = document.getElementById("nomeGerado")
-    nomeGerado.textContent = `Patchcord ${descricaoE} ${descricaoC} ${descricaoD} ${comprimento}m`
-       
+    
     const custoE = dados[arquivoE]?.CUSTO || arquivoE;
     const custoC = dados[arquivoC]?.CUSTO || arquivoC;
     const custoD = dados[arquivoD]?.CUSTO || arquivoD;
     let custo = document.getElementById("custo")
-    custoTotal = custoE + custoC + custoD    
-    custo.textContent = `${custoTotal} €`
+    custoTotal = custoE + custoD + (comprimento * custoC)
+    
+    if (comprimento == 0 || comprimento == ""){
+        nomeGerado.textContent = `Patchcord ${descricaoE} ${descricaoC} ${descricaoD}`
+        custo.textContent = "Este comprimento não é válido"
+    }
+    else {
+        nomeGerado.textContent = `Patchcord ${descricaoE} ${descricaoC} ${descricaoD} ${comprimento}m`
+        custo.textContent = `${custoTotal.toFixed(2)} €`
+    } 
 
     console.log(custoE)
     console.log(custoC)

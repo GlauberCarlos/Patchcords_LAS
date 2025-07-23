@@ -13,7 +13,7 @@ body{
 header{
     background-color: #ffffff;
     display: flex;
-    border-bottom: 3px solid #023047;
+    border-bottom: 3px solid #c7c7c7;
     justify-content: center;
     align-items: center;
     padding: 10px 0;
@@ -24,13 +24,13 @@ header{
 }
 
 .yelco {    
-    height: 70px;
+    height: 55px;
 }
 
 .titulo {
     font-weight: bold;
-    font-size: 30px;
-    padding-left: 180px;
+    font-size: 25px;
+    padding-left: 100px;
     text-align: center;
 }
 
@@ -67,7 +67,7 @@ header{
 .form-bloco label {
     font-weight: bold;
     font-size: 16px;
-    color: #023047;
+    color: #3d3d3d;
     padding: 5px 5px 15px;
     width: 220px;
     /* border: 1px solid #cf359c; */
@@ -76,7 +76,7 @@ header{
 .medida label{
     font-weight: bold;
     font-size: 16px;
-    color: #023047;
+    color: #3d3d3d;
     padding:  5px 5px 15px;
     width: 220px;
 }
@@ -133,11 +133,13 @@ select {
 
 .nome-gerado{
     text-align: center;
-    padding-top: 15px;
+    padding: 8px 0;
     font-size: 18px;
+    /* border: 1px solid #cf3535; */
+
 }
 
-#nomeGerado {
+#nomeGerado, #custo{
     font-weight: bold;
     color: #023047;
 }
@@ -147,7 +149,7 @@ select {
   }
 
 #btnGerar{    
-    width: 200px;
+    width: 280px;
     /* border: 1px solid #cf3535; */
     margin: 20px auto;
     text-align: center;
