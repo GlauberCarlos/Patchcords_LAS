@@ -14,10 +14,10 @@
         <div class="titulo">Configurador de Patchcords</div>
     </header>
     <div id="resumo">
-        Selecione o Conector Esquerdo, o tipo de Cabo e o Conector Direito.<br>
+        Selecione as opções desejadas.<br>
         Digite o comprimento e clique em "Guardar Imagem".
     </div>
-    <div class="seletores">
+    <div class="corpo">
         <div id="formularios">
             <div class="form-bloco">
                 <label for="conE">Conector Esquerdo</label>
@@ -34,7 +34,14 @@
                 <select name="conD" id="conD" class="selectD">
                 </select>
             </div>
-            <div class="medida">
+            <div class="form-bloco">
+                <label for="diametro">Diâmetro (mm)</label>
+                <select name="diametro" id="diametro" class="diametro">
+                    <option value="1.72">Ø 2mm</option>
+                    <option value="1.86">Ø 3mm</option>
+                </select>
+            </div>
+            <div class="form-bloco">
                 <label for="comprimento">Comprimento do Cabo (m)</label>
                 <input
                     id="comprimento"

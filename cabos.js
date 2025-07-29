@@ -118,6 +118,10 @@ async function atualizarDescricaoECusto() {
     const descricaoD = dados[arquivoD]?.DESCRICAO || arquivoD;
 
     const nomeGerado = document.getElementById("nomeGerado");
+    const diametro = document.getElementById("diametro");
+    const diametroNome = diametro.options[diametro.selectedIndex].text;
+    const diametroCusto = document.getElementById("diametro").value;
+
     const custoE = dados[arquivoE]?.CUSTO || 0;
     const custoC = dados[arquivoC]?.CUSTO || 0;
     const custoD = dados[arquivoD]?.CUSTO || 0;
@@ -125,13 +129,13 @@ async function atualizarDescricaoECusto() {
     const custo = document.getElementById("custo");
 
     if (!comprimento || comprimento <= 0) {
-        nomeGerado.textContent = `Patchcord ${descricaoC} 2.0mm ${descricaoE} ${descricaoD}`;
+        nomeGerado.textContent = `Patchcord ${descricaoC} ${diametroNome} ${descricaoE} ${descricaoD}`;
         custo.textContent = "Este comprimento não é válido";
         return;
     }
 
-    const custoTotal = custoE + custoD + (comprimento * custoC);
-    nomeGerado.textContent = `Patchcord ${descricaoC} 2.0mm ${descricaoE} ${descricaoD} ${comprimento}m`;
+    const custoTotal = custoE + custoD + (comprimento * custoC * diametroCusto);
+    nomeGerado.textContent = `Patchcord ${descricaoC} ${diametroNome} ${descricaoE} ${descricaoD} ${comprimento}m`;
     custo.textContent = `${custoTotal.toFixed(2)} €`;
 }
 
@@ -328,5 +332,6 @@ document.getElementById("comprimento").addEventListener("input", atualizarDescri
 document.getElementById("conE").addEventListener("change", atualizarDescricaoECusto);
 document.getElementById("rolo").addEventListener("change", atualizarDescricaoECusto);
 document.getElementById("conD").addEventListener("change", atualizarDescricaoECusto);
+document.getElementById("diametro").addEventListener("change", atualizarDescricaoECusto);
 
 
